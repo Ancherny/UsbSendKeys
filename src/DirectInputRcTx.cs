@@ -34,7 +34,6 @@ public class DirectInputRcTx : IRcTx
             Log.Info(doi.ObjectId.ToString());
         }
 
-        return true;
         // Set BufferSize in order to use buffered data.
         txJoystick.Properties.BufferSize = 128;
 
@@ -45,6 +44,7 @@ public class DirectInputRcTx : IRcTx
         while (true)
         {
             txJoystick.Poll();
+            JoystickState state = txJoystick.GetCurrentState();
             JoystickUpdate[] joystickUpdates = txJoystick.GetBufferedData();
             foreach (JoystickUpdate joystickUpdate in joystickUpdates)
             {
