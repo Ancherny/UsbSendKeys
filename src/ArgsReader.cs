@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-internal static class ArgsReader
+public static class ArgsReader
 {
     private const string argsPrefix = "-args:";
     private const char argsSep = ';';

@@ -2,7 +2,7 @@
 using System.IO;
 using SimpleJSON;
 
-internal struct Config
+public struct Config
 {
     private const string deviceNameField = "device_name";
     private const string procNameField = "proc_name";

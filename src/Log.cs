@@ -1,6 +1,6 @@
 ﻿using System;
 
-internal static class Log
+public static class Log
 {
     public static void Info(string message)
     {
