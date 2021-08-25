@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using SharpDX.DirectInput;
 
 public class DirectInputRcTx : IRcTx
 {
-    private readonly DeviceInstance _txDevice;
+    private readonly Joystick _txJoystick;
 
-    private DirectInputRcTx(DeviceInstance txDevice)
+    private DirectInputRcTx(Joystick txJoystick)
     {
-        _txDevice = txDevice;
+        _txJoystick = txJoystick;
     }
 
     public static bool CreateByName(out IRcTx tx, string txName)
@@ -24,7 +25,26 @@ public class DirectInputRcTx : IRcTx
             return false;
         }
 
-        tx = new DirectInputRcTx(txDevice);
+        Joystick txJoystick = new Joystick(directInput, txDevice.InstanceGuid);
+        tx = new DirectInputRcTx(txJoystick);
+
+        // Set BufferSize in order to use buffered data.
+        txJoystick.Properties.BufferSize = 128;
+
+        // Acquire the joystick
+        txJoystick.Acquire();
+
+        // Poll events from joystick
+        while (true)
+        {
+            txJoystick.Poll();
+            JoystickUpdate[] joystickUpdates = txJoystick.GetBufferedData();
+            foreach (JoystickUpdate joystickUpdate in joystickUpdates)
+            {
+                Log.Info(joystickUpdate.ToString());
+            }
+            Thread.Sleep(1000);
+        }
         return true;
     }
 }
