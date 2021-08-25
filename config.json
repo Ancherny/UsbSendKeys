@@ -1,0 +1,11 @@
+{
+    "proc_name": "FPVFreerider_Recharged",
+    "keys": [
+        {
+            "code": 85,
+            "channel": 1,
+            "from": 0,
+            "to": 1
+        }
+    ]
+}
