@@ -7,15 +7,15 @@ public class KeySender
     private const uint keyDownMsg = 0x0100;
     private const int keyU = 0x55;
 
-    private readonly IRcController _controller;
+    private readonly IRcTx _tx;
     private readonly Process _process;
 
     [DllImport("user32.dll")]
     private static extern bool PostMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
 
-    private KeySender(IRcController controller, Process process)
+    private KeySender(IRcTx tx, Process process)
     {
-        _controller = controller;
+        _tx = tx;
         _process = process;
     }
 
@@ -31,8 +31,8 @@ public class KeySender
                 break;
             }
 
-            IRcController controller;
-            if (!DirectInputRcController.CreateByName(out controller, config.DeviceName))
+            IRcTx tx;
+            if (!DirectInputRcTx.CreateByName(out tx, config.TxName))
             {
                 break;
             }
@@ -51,7 +51,7 @@ public class KeySender
             }
 
             Process process = processes[0];
-            keySender = new KeySender(controller, process);
+            keySender = new KeySender(tx, process);
             isSuccess = true;
 
         } while (false);
