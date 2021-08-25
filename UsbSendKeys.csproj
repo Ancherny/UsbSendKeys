@@ -38,10 +38,8 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="ArgsReader.cs" />
-        <Compile Include="Log.cs" />
-        <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="src\ArgsReader.cs" />
         <Compile Include="src\Json\JSON.cs" />
         <Compile Include="src\Json\JSONArray.cs" />
         <Compile Include="src\Json\JSONBinaryTag.cs" />
@@ -49,6 +47,8 @@
         <Compile Include="src\Json\JSONData.cs" />
         <Compile Include="src\Json\JSONLazyCreator.cs" />
         <Compile Include="src\Json\JSONNode.cs" />
+        <Compile Include="src\Log.cs" />
+        <Compile Include="src\Program.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
