@@ -33,29 +33,36 @@ public class ArgsReader
     }
 
     // ReSharper disable once MemberCanBePrivate.Global
-    public static string GetString(string argName, string defaultValue=null)
+    public static bool GetString(out string value, string argName, string defaultValue=null)
     {
+        value = null;
         Dictionary<string, string> customArgsDict = GetArgs();
-        string argValue;
-        if (!customArgsDict.TryGetValue(argName, out argValue))
+        if (customArgsDict.TryGetValue(argName, out value))
         {
-            if (defaultValue == null)
-            {
-                Log.Error($"Cannot get argument '{argName}' from the command line.");
-                argValue = string.Empty;
-            }
-            else
-            {
-                argValue = defaultValue;
-            }
+            return true;
         }
 
-        return argValue;
+        if (defaultValue != null)
+        {
+            value = defaultValue;
+            return true;
+        }
+        return false;
     }
 
-    public static bool GetBool(string optionName, bool defaultValue)
+    public static bool GetBool(out bool value, string argName, bool defaultValue=false)
     {
-        string valueStr = GetString(argName:optionName, defaultValue:defaultValue ? "yes" : "no");
-        return valueStr.ToLower() == "yes";
+        string arg;
+        if (GetString(out arg, argName))
+        {
+            arg = arg.ToLower();
+            value = arg == "true" ||
+                    arg == "on" ||
+                    arg == "yes";
+            return true;
+        }
+
+        value = defaultValue;
+        return false;
     }
 }
