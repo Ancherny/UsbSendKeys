@@ -28,6 +28,13 @@ public class DirectInputRcTx : IRcTx
         Joystick txJoystick = new Joystick(directInput, txDevice.InstanceGuid);
         tx = new DirectInputRcTx(txJoystick);
 
+        foreach (DeviceObjectInstance doi in txJoystick.GetObjects(DeviceObjectTypeFlags.AbsoluteAxis))
+        {
+            Log.Info(doi.Name);
+            Log.Info(doi.ObjectId.ToString());
+        }
+
+        return true;
         // Set BufferSize in order to use buffered data.
         txJoystick.Properties.BufferSize = 128;
 
