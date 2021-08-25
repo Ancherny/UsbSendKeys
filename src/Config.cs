@@ -4,6 +4,7 @@ using SimpleJSON;
 
 internal struct Config
 {
+    private const string deviceNameField = "device_name";
     private const string procNameField = "proc_name";
     private const string keysField = "keys";
     private const string codeField = "code";
@@ -23,6 +24,9 @@ internal struct Config
         public int From { get; set; }
         public int To { get; set; }
     }
+
+    // Name of the game controller device to read 
+    public string DeviceName { get; set; }
 
     // Name of the running process to send keypresses to 
     public string ProcName { get; set; }
@@ -58,6 +62,13 @@ internal struct Config
                 break;
             }
             
+            config.DeviceName = root[deviceNameField];
+            if (string.IsNullOrEmpty(config.DeviceName))
+            {
+                Log.Error("Cannot get device name from config.");
+                break;
+            }
+
             config.ProcName = root[procNameField];
             if (string.IsNullOrEmpty(config.ProcName))
             {
