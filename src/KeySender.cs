@@ -25,8 +25,8 @@ public class KeySender
         bool isSuccess = false;
         do
         {
-            Config config;
-            if (!Config.ReadFromJson(out config, cfgJsonPath))
+            Config config = new Config();
+            if (!config.ReadFromJson(cfgJsonPath))
             {
                 break;
             }
@@ -36,7 +36,7 @@ public class KeySender
             {
                 break;
             }
-            
+
             Process [] processes = Process.GetProcessesByName(config.ProcName);
             if (processes.Length <= 0)
             {

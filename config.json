@@ -5,8 +5,14 @@
         {
             "code": 85,
             "channel": 1,
-            "from": 0,
-            "to": 1
+            "from": 1000,
+            "to": 1400
+        },
+        {
+            "code": 73,
+            "channel": 1,
+            "from": 1600,
+            "to": 2000
         }
     ]
 }

@@ -3,7 +3,7 @@ using SharpDX.DirectInput;
 
 public class DirectInputRcTx : IRcTx
 {
-    public static bool CreateByName(out IRcTx tx, string txName)
+    public static bool CreateByName(out IRcTx tx, string name)
     {
         DirectInput directInput = new DirectInput();
         IList<DeviceInstance> devices = directInput.GetDevices(DeviceClass.All, DeviceEnumerationFlags.AllDevices);
