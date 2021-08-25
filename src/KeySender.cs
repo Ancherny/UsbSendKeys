@@ -9,14 +9,16 @@ public class KeySender
 
     private readonly IRcTx _tx;
     private readonly Process _process;
+    private readonly Config.Key[] _keys;
 
     [DllImport("user32.dll")]
     private static extern bool PostMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
 
-    private KeySender(IRcTx tx, Process process)
+    private KeySender(IRcTx tx, Process process, Config.Key[] keys)
     {
         _tx = tx;
         _process = process;
+        _keys = keys;
     }
 
     public static bool Create(out KeySender keySender, string cfgJsonPath)
@@ -51,7 +53,14 @@ public class KeySender
             }
 
             Process process = processes[0];
-            keySender = new KeySender(tx, process);
+
+            if (config.Keys.Length <= 0)
+            {
+                Log.Error("No keys defined in config.");
+                break;
+            }
+
+            keySender = new KeySender(tx, process, config.Keys);
             isSuccess = true;
 
         } while (false);
