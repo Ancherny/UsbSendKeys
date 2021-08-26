@@ -85,14 +85,19 @@ public class KeySender
                 break;
             }
 
-            bool goingFine = true;
-            bool[] activated = currentState.GetActivated(_keys, _lastState);
+            bool[] activated;
+            if (!currentState.GetActivated(out activated, _keys, _lastState))
+            {
+                break;
+            }
+
+            bool wasError = false;
             foreach (Config.Key key in _keys)
             {
                 if (key.ChannelId < 0 || key.ChannelId >= activated.Length)
                 {
                     Log.Error("Channel id is out of range.");
-                    goingFine = false;
+                    wasError = true;
                     break;
                 }
 
@@ -101,7 +106,7 @@ public class KeySender
                     PostMessage(_process.MainWindowHandle, keyDownMsg, (int)key.KeyToPress, 0);
                 }
             }
-            if (!goingFine)
+            if (wasError)
             {
                 break;
             }

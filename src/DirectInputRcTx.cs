@@ -41,11 +41,11 @@ public class DirectInputRcTx : IRcTx
             return true;
         }
 
-        public bool[] GetActivated(Config.Key[] keys, IChannelsState lastState)
+        public bool GetActivated(out bool[] activated, Config.Key[] keys, IChannelsState lastState)
         {
-            throw new NotImplementedException();
+            activated = new bool[_getState.Length];
+            return true;
         }
-
     }
 
     private readonly Joystick _txJoystick;
