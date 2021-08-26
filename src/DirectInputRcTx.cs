@@ -7,7 +7,7 @@ public class DirectInputRcTx : IRcTx
 {
     private class ChannelsState : IChannelsState
     {
-        // Channel state is standard RC TX microseconds range of (1000:2000) 
+        // Channel state is standard RC TX microseconds range of (1000:2000)
         private readonly int[] _state;
 
         private static int AxisValueToMicroseconds(int axisValue)
@@ -31,7 +31,7 @@ public class DirectInputRcTx : IRcTx
         {
             _state = new int[_getState.Length];
         }
-        
+
         public bool Init(JoystickState state)
         {
             for (int channelId = 0; channelId < _getState.Length; channelId++)
@@ -40,14 +40,14 @@ public class DirectInputRcTx : IRcTx
             }
             return true;
         }
-        
+
         public bool[] GetActivated(Config.Key[] keys, IChannelsState lastState)
         {
             throw new NotImplementedException();
         }
-        
+
     }
-    
+
     private readonly Joystick _txJoystick;
 
     private DirectInputRcTx(Joystick txJoystick)

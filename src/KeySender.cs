@@ -101,12 +101,13 @@ public class KeySender
                     PostMessage(_process.MainWindowHandle, keyDownMsg, (int)key.KeyToPress, 0);
                 }
             }
-
-            if (goingFine)
+            if (!goingFine)
             {
-                _lastState = currentState;
-                Thread.Sleep(frameDuration);
+                break;
             }
+
+            _lastState = currentState;
+            Thread.Sleep(frameDuration);
         }
     }
 }
