@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 public class KeySender
 {
     private const uint keyDownMsg = 0x0100;
-    private const int keyU = 0x55;
+
+    // Frame time to refresh RC TX state in milliseconds
+    private const int frameDuration = 100;
 
     private readonly IRcTx _rcTx;
     private readonly Process _process;
     private readonly Config.Key[] _keys;
+
+    private IChannelsState _lastState;
 
     [DllImport("user32.dll")]
     private static extern bool PostMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
@@ -70,10 +75,34 @@ public class KeySender
 
     public void StartSending()
     {
-        // while(true)
-        // {
-        //     PostMessage(proc.MainWindowHandle, keyDownMsg, keyU, 0);
-        //     Thread.Sleep(5000);
-        // }
+        Log.Info("Keys sending started. Press any key to exit.");
+
+        bool goingFine = true;
+        while(goingFine && Console.KeyAvailable == false)
+        {
+            IChannelsState currentState;
+            if (!_rcTx.GetChannelsState(out currentState))
+            {
+                break;
+            }
+
+            bool[] activated = currentState.GetActivated(_keys, _lastState);
+            foreach (Config.Key key in _keys)
+            {
+                if (key.ChannelId < 0 || key.ChannelId >= activated.Length)
+                {
+                    Log.Error("Channel value is out of range.");
+                    goingFine = false;
+                    break;
+                }
+                PostMessage(_process.MainWindowHandle, keyDownMsg, (int)key.KeyToPress, 0);
+            }
+
+            if (goingFine)
+            {
+                _lastState = currentState;
+                Thread.Sleep(frameDuration);
+            }
+        }
     }
 }
