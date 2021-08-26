@@ -61,7 +61,13 @@ public struct Config
 
         private delegate bool GetValue<T>(out T value, JSONNode node);
 
-        private static bool GetField<T>(out T value, JSONNode node, string fieldName, T defaultValue, GetValue<T> getValue)
+        private static bool GetField<T>(
+            out T value,
+            JSONNode node,
+            string fieldName,
+            T defaultValue,
+            GetValue<T> getValue,
+            bool acceptDefaultValue = false)
         {
             value = defaultValue;
             bool isSuccess = false;
@@ -72,9 +78,11 @@ public struct Config
                 {
                     break;
                 }
-                isSuccess = getValue(out value, node);
+                isSuccess = getValue(out value, valueNode);
 
             } while (false);
+
+            isSuccess |= acceptDefaultValue;
 
             if (!isSuccess)
             {
@@ -89,7 +97,7 @@ public struct Config
                 out value,
                 node, fieldName,
                 -1,
-                (out int iv, JSONNode jn) => int.TryParse(node, out iv));
+                (out int iv, JSONNode jn) => int.TryParse(jn, out iv));
         }
 
         private static bool GetString(out string value,  JSONNode node, string fieldName)
@@ -113,7 +121,8 @@ public struct Config
                 node,
                 fieldName,
                 false,
-                (out bool bv, JSONNode jn) => bool.TryParse(node, out bv));
+                (out bool bv, JSONNode jn) => bool.TryParse(jn, out bv),
+                true);
         }
 
         private static bool GetConsoleKey(out ConsoleKey value,  JSONNode node, string fieldName)
@@ -123,7 +132,7 @@ public struct Config
                 node,
                 fieldName,
                 ConsoleKey.Escape,
-                (out ConsoleKey kv, JSONNode jn) => Enum.TryParse<ConsoleKey>(node, out kv));
+                (out ConsoleKey kv, JSONNode jn) => Enum.TryParse<ConsoleKey>(jn, out kv));
         }
 
         public bool ReadFromJson(JSONNode node)
