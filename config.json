@@ -4,15 +4,15 @@
     "keys": [
         {
             "name": "Acro",
-            "code": "U",
+            "keyToPress": "U",
             "channel": 6,
             "from": 1000,
             "to": 1400,
             "sendOnStart": true
         },
         {
-            "name": "Acro",
-            "code": "I",
+            "name": "Angle",
+            "keyToPress": "I",
             "channel": 6,
             "from": 1600,
             "to": 2000
