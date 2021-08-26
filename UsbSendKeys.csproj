@@ -50,6 +50,7 @@
         <Compile Include="src\ArgsReader.cs" />
         <Compile Include="src\Config.cs" />
         <Compile Include="src\DirectInputRcTx.cs" />
+        <Compile Include="src\IChannelsState.cs" />
         <Compile Include="src\IRcTx.cs" />
         <Compile Include="src\Json\JSON.cs" />
         <Compile Include="src\Json\JSONArray.cs" />

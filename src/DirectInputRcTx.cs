@@ -5,8 +5,50 @@ using SharpDX.DirectInput;
 
 public class DirectInputRcTx : IRcTx
 {
+    private class ChannelsState : IChannelsState
+    {
+        // Channel state is standard RC TX microseconds range of (1000:2000) 
+        private readonly int[] _state;
+
+        private static int AxisValueToMicroseconds(int axisValue)
+        {
+            return (int)(1.0f / uint.MaxValue * axisValue * 1000 + 1000);
+        }
+
+        private static readonly Func<JoystickState, int>[] _getState =
+        {
+            js => AxisValueToMicroseconds(js.X),
+            js => AxisValueToMicroseconds(js.Y),
+            js => AxisValueToMicroseconds(js.Z),
+            js => AxisValueToMicroseconds(js.RotationX),
+            js => AxisValueToMicroseconds(js.RotationY),
+            js => AxisValueToMicroseconds(js.RotationZ),
+            js => AxisValueToMicroseconds(js.Sliders[0]),
+            js => AxisValueToMicroseconds(js.Sliders[1]),
+        };
+
+        public ChannelsState()
+        {
+            _state = new int[_getState.Length];
+        }
+        
+        public bool Init(JoystickState state)
+        {
+            for (int channelId = 0; channelId < _getState.Length; channelId++)
+            {
+                _state[channelId] = _getState[channelId](state);
+            }
+            return true;
+        }
+        
+        public bool[] GetActivated(Config.Key[] keys, IChannelsState lastState)
+        {
+            throw new NotImplementedException();
+        }
+        
+    }
+    
     private readonly Joystick _txJoystick;
-    private readonly int[] _channelsState = new int[8];
 
     private DirectInputRcTx(Joystick txJoystick)
     {
@@ -44,24 +86,11 @@ public class DirectInputRcTx : IRcTx
         return true;
     }
 
-    private static int AxisValueToMicroseconds(int axisValue)
+    public bool GetChannelsState(out IChannelsState state)
     {
-        return (int)(1.0f / uint.MaxValue * axisValue * 1000 + 1000);
-    }
-
-    public bool GetChannelsState(out int[] channelsState)
-    {
-        JoystickState state = _txJoystick.GetCurrentState();
-        _channelsState[0] = AxisValueToMicroseconds(state.X);
-        _channelsState[1] = AxisValueToMicroseconds(state.Y);
-        _channelsState[2] = AxisValueToMicroseconds(state.Z);
-        _channelsState[3] = AxisValueToMicroseconds(state.RotationX);
-        _channelsState[4] = AxisValueToMicroseconds(state.RotationY);
-        _channelsState[5] = AxisValueToMicroseconds(state.RotationZ);
-        _channelsState[6] = AxisValueToMicroseconds(state.Sliders[0]);
-        _channelsState[7] = AxisValueToMicroseconds(state.Sliders[1]);
-        channelsState = _channelsState;
-        return true;
+        ChannelsState channelsState = new ChannelsState();
+        state = channelsState;
+        return channelsState.Init(_txJoystick.GetCurrentState());
     }
 
     public void Dispose()
