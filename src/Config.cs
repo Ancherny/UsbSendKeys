@@ -132,7 +132,7 @@ public struct Config
                 node,
                 fieldName,
                 ConsoleKey.Escape,
-                (out ConsoleKey kv, JSONNode jn) => Enum.TryParse<ConsoleKey>(jn, out kv));
+                (out ConsoleKey kv, JSONNode jn) => Enum.TryParse(jn, out kv));
         }
 
         public bool ReadFromJson(JSONNode node)
@@ -185,7 +185,7 @@ public struct Config
     public string ProcName { get; private set; }
 
     // Keypresses mapping
-    public Key[] Keys { get; set; }
+    public Key[] Keys { get; private set; }
 
     public bool ReadFromJson(string jsonPath)
     {

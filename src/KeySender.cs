@@ -77,8 +77,7 @@ public class KeySender
     {
         Log.Info("Keys sending started. Press any key to exit.");
 
-        bool goingFine = true;
-        while(goingFine && Console.KeyAvailable == false)
+        while(Console.KeyAvailable == false)
         {
             IChannelsState currentState;
             if (!_rcTx.GetChannelsState(out currentState))
@@ -86,6 +85,7 @@ public class KeySender
                 break;
             }
 
+            bool goingFine = true;
             bool[] activated = currentState.GetActivated(_keys, _lastState);
             foreach (Config.Key key in _keys)
             {
