@@ -7,15 +7,20 @@ public struct Config
     private const string txNameField = "tx_name";
     private const string procNameField = "proc_name";
     private const string keysField = "keys";
-    private const string codeField = "code";
+    private const string nameField = "name";
+    private const string keyToPressField = "keyToPress";
     private const string channelField = "channel";
     private const string fromField = "from";
     private const string toField = "to";
+    private const string sendOnStartField = "sendOnStart";
 
     public struct Key
     {
+        // Name of the operation keypress performs
+        private string _name;
+        
         // Code of the keypress to pass to the process
-        private int _code;
+        private ConsoleKey _keyToPress;
 
         // Game controller channel id
         private int _channelId;
@@ -24,9 +29,12 @@ public struct Config
         private int _from;
         private int _to;
 
-        public int Code
+        // If true this keypress will be sent to the process on start
+        private bool _sendOnStart;
+        
+        public ConsoleKey KeyToPress
         {
-            get { return _code; }
+            get { return _keyToPress; }
         }
         public int ChannelId
         {
@@ -41,31 +49,88 @@ public struct Config
             get { return _to; }
         }
 
-        private static bool GetInt(out int value,  JSONNode node, string intName)
+        public bool SendOnStart
         {
-            value = -1;
+            get { return _sendOnStart; }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+        }
+
+        private delegate bool GetValue<T>(out T value, JSONNode node);
+
+        private static bool GetField<T>(out T value, JSONNode node, string fieldName, T defaultValue, GetValue<T> getValue)
+        {
+            value = defaultValue;
             bool isSuccess = false;
             do
             {
-                JSONNode intNode = node[intName];
+                JSONNode intNode = node[fieldName];
                 if (intNode == null)
                 {
-                    Log.Error($"Cannot get int value from field '{intName}'");
                     break;
                 }
-
-                value = intNode.AsInt;
-                isSuccess = true;
+                isSuccess = getValue(out value, node);
 
             } while (false);
 
+            if (!isSuccess)
+            {
+                Log.Error($"Cannot get {typeof(T)} value from field '{fieldName}'");
+            }
             return isSuccess;
+        }
+
+        private static bool GetInt(out int value,  JSONNode node, string fieldName)
+        {
+            return GetField(
+                out value,
+                node, fieldName,
+                -1,
+                (out int iv, JSONNode jn) => int.TryParse(node, out iv));
+        }
+
+        private static bool GetString(out string value,  JSONNode node, string fieldName)
+        {
+            return GetField(
+                out value,
+                node,
+                fieldName,
+                null,
+                (out string sv, JSONNode jn) =>
+                {
+                    sv = jn;
+                    return !string.IsNullOrEmpty(sv);
+                });
+        }
+
+        private static bool GetBool(out bool value,  JSONNode node, string fieldName)
+        {
+            return GetField(
+                out value,
+                node,
+                fieldName,
+                false,
+                (out bool bv, JSONNode jn) => bool.TryParse(node, out bv));
+        }
+        
+        private static bool GetConsoleKey(out ConsoleKey value,  JSONNode node, string fieldName)
+        {
+            return GetField(
+                out value,
+                node,
+                fieldName,
+                ConsoleKey.Escape,
+                (out ConsoleKey kv, JSONNode jn) => Enum.TryParse<ConsoleKey>(node, out kv));
         }
 
         public bool ReadFromJson(JSONNode node)
         {
             bool isSuccess = true;
-            isSuccess &= GetInt(out _code, node, codeField);
+            isSuccess &= GetString(out _name, node, nameField);
+            isSuccess &= GetConsoleKey(out _keyToPress, node, keyToPressField);
 
             int channel; 
             isSuccess &= GetInt(out channel, node, channelField);
@@ -91,6 +156,14 @@ public struct Config
                 Log.Error($"Bad 'to' value: #{_to}  From value should be in range (1000:2000) as RC TX microseconds.");
                 isSuccess = false;
             }
+            
+            if (_from >= _to)
+            {
+                Log.Error($"'from' value should be less than 'to' value.");
+                isSuccess = false;
+            }
+
+            isSuccess &= GetBool(out _sendOnStart, node, sendOnStartField);
 
             return isSuccess;
         }

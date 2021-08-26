@@ -3,14 +3,17 @@
     "proc_name": "FPVFreerider_Recharged",
     "keys": [
         {
-            "code": 85,
-            "channel": 1,
+            "name": "Acro",
+            "code": "U",
+            "channel": 6,
             "from": 1000,
-            "to": 1400
+            "to": 1400,
+            "sendOnStart": true
         },
         {
-            "code": 73,
-            "channel": 1,
+            "name": "Acro",
+            "code": "I",
+            "channel": 6,
             "from": 1600,
             "to": 2000
         }
