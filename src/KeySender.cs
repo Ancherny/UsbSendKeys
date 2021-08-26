@@ -7,16 +7,16 @@ public class KeySender
     private const uint keyDownMsg = 0x0100;
     private const int keyU = 0x55;
 
-    private readonly IRcTx _tx;
+    private readonly IRcTx _rcTx;
     private readonly Process _process;
     private readonly Config.Key[] _keys;
 
     [DllImport("user32.dll")]
     private static extern bool PostMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
 
-    private KeySender(IRcTx tx, Process process, Config.Key[] keys)
+    private KeySender(IRcTx rcTx, Process process, Config.Key[] keys)
     {
-        _tx = tx;
+        _rcTx = rcTx;
         _process = process;
         _keys = keys;
     }
