@@ -32,6 +32,10 @@ public struct Config
         // If true this keypress will be sent to the process on start
         private bool _sendOnStart;
 
+        public string Name
+        {
+            get { return _name; }
+        }
         public ConsoleKey KeyToPress
         {
             get { return _keyToPress; }
@@ -40,23 +44,14 @@ public struct Config
         {
             get { return _channelId; }
         }
-        public int From
-        {
-            get { return _from; }
-        }
-        public int To
-        {
-            get { return _to; }
-        }
-
         public bool SendOnStart
         {
             get { return _sendOnStart; }
         }
 
-        public string Name
+        public bool IsActive(int channelValue)
         {
-            get { return _name; }
+            return channelValue > _from && channelValue < _to;
         }
 
         private delegate bool GetValue<T>(out T value, JSONNode node);

@@ -63,18 +63,17 @@ public class DirectInputRcTx : IRcTx
                         wasError = true;
                         break;
                     }
-                    int lastValue = lastState._channelValues[key.ChannelId];
-                    bool wasActive = lastValue > key.From && lastValue < key.To;
 
-                    int currentValue = _channelValues[key.ChannelId];
-                    bool isActive = currentValue > key.From && currentValue < key.To;
+                    bool wasActive = key.IsActive(lastState._channelValues[key.ChannelId]);
+                    bool isActive = key.IsActive(_channelValues[key.ChannelId]);
 
                     bool isActivated = wasActive ^ isActive && isActive;
+                    activated[key.ChannelId] = isActivated;
+
                     if (isActivated)
                     {
                         Log.Info($"Key '{key.Name}' is activated");
                     }
-                    activated[key.ChannelId] = isActivated;
                 }
                 if (wasError)
                 {
