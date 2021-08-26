@@ -67,8 +67,8 @@ public struct Config
             bool isSuccess = false;
             do
             {
-                JSONNode intNode = node[fieldName];
-                if (intNode == null)
+                JSONNode valueNode = node[fieldName];
+                if (valueNode == null)
                 {
                     break;
                 }
