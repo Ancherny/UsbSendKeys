@@ -7,15 +7,15 @@ public class DirectInputRcTx : IRcTx
 {
     private class ChannelsState : IChannelsState
     {
-        // Channel state is standard RC TX microseconds range of (1000:2000)
-        private readonly int[] _state;
+        // Channel values are of standard RC TX microseconds range of (1000:2000)
+        private readonly int[] _channelValues;
 
         private static int AxisValueToMicroseconds(int axisValue)
         {
             return (int)(1.0f / uint.MaxValue * axisValue * 1000 + 1000);
         }
 
-        private static readonly Func<JoystickState, int>[] _getState =
+        private static readonly Func<JoystickState, int>[] _getChannelValues =
         {
             js => AxisValueToMicroseconds(js.X),
             js => AxisValueToMicroseconds(js.Y),
@@ -29,22 +29,67 @@ public class DirectInputRcTx : IRcTx
 
         public ChannelsState()
         {
-            _state = new int[_getState.Length];
+            _channelValues = new int[_getChannelValues.Length];
         }
 
         public bool Init(JoystickState state)
         {
-            for (int channelId = 0; channelId < _getState.Length; channelId++)
+            for (int channelId = 0; channelId < _getChannelValues.Length; channelId++)
             {
-                _state[channelId] = _getState[channelId](state);
+                _channelValues[channelId] = _getChannelValues[channelId](state);
             }
             return true;
         }
 
-        public bool GetActivated(out bool[] activated, Config.Key[] keys, IChannelsState lastState)
+        public bool GetActivated(out bool[] activated, Config.Key[] keys, IChannelsState lastChannelsState)
         {
-            activated = new bool[_getState.Length];
-            return true;
+            bool isSuccess = false;
+            do
+            {
+                activated = new bool[_getChannelValues.Length];
+                ChannelsState lastState = (ChannelsState)lastChannelsState;
+                if (lastState == null || lastState._channelValues.Length != _getChannelValues.Length)
+                {
+                    Log.Error($"Bad last channels state.");
+                    break;
+                }
+
+                bool wasError = false;
+                foreach (Config.Key key in keys)
+                {
+                    if (key.ChannelId < 0 || key.ChannelId >= _getChannelValues.Length)
+                    {
+                        Log.Error("Channel id is out of range.");
+                        wasError = true;
+                        break;
+                    }
+                    int lastValue = lastState._channelValues[key.ChannelId];
+                    bool wasActive = lastValue > key.From && lastValue < key.To;
+
+                    int currentValue = _channelValues[key.ChannelId];
+                    bool isActive = currentValue > key.From && currentValue < key.To;
+
+                    bool isActivated = wasActive ^ isActive && isActive;
+                    if (isActivated)
+                    {
+                        Log.Info($"Key '{key.Name}' is activated");
+                    }
+                    activated[key.ChannelId] = isActivated;
+                }
+                if (wasError)
+                {
+                    break;
+                }
+
+                isSuccess = true;
+
+            } while (false);
+
+            if (!isSuccess)
+            {
+                Log.Error("Failed to get activated channels state.");
+            }
+            return isSuccess;
         }
     }
 
