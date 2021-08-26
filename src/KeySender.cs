@@ -91,11 +91,15 @@ public class KeySender
             {
                 if (key.ChannelId < 0 || key.ChannelId >= activated.Length)
                 {
-                    Log.Error("Channel value is out of range.");
+                    Log.Error("Channel id is out of range.");
                     goingFine = false;
                     break;
                 }
-                PostMessage(_process.MainWindowHandle, keyDownMsg, (int)key.KeyToPress, 0);
+
+                if (activated[key.ChannelId])
+                {
+                    PostMessage(_process.MainWindowHandle, keyDownMsg, (int)key.KeyToPress, 0);
+                }
             }
 
             if (goingFine)
