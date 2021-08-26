@@ -64,11 +64,11 @@ public struct Config
 
         public bool ReadFromJson(JSONNode node)
         {
-            bool isSuccess = false;
-            isSuccess |= GetInt(out _code, node, codeField);
-            isSuccess |= GetInt(out _channel, node, channelField);
-            isSuccess |= GetInt(out _from, node, fromField);
-            isSuccess |= GetInt(out _to, node, toField);
+            bool isSuccess = true;
+            isSuccess &= GetInt(out _code, node, codeField);
+            isSuccess &= GetInt(out _channel, node, channelField);
+            isSuccess &= GetInt(out _from, node, fromField);
+            isSuccess &= GetInt(out _to, node, toField);
             return isSuccess;
         }
     }
