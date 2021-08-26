@@ -18,7 +18,7 @@ public struct Config
     {
         // Name of the operation keypress performs
         private string _name;
-        
+
         // Code of the keypress to pass to the process
         private ConsoleKey _keyToPress;
 
@@ -31,7 +31,7 @@ public struct Config
 
         // If true this keypress will be sent to the process on start
         private bool _sendOnStart;
-        
+
         public ConsoleKey KeyToPress
         {
             get { return _keyToPress; }
@@ -115,7 +115,7 @@ public struct Config
                 false,
                 (out bool bv, JSONNode jn) => bool.TryParse(node, out bv));
         }
-        
+
         private static bool GetConsoleKey(out ConsoleKey value,  JSONNode node, string fieldName)
         {
             return GetField(
@@ -132,7 +132,7 @@ public struct Config
             isSuccess &= GetString(out _name, node, nameField);
             isSuccess &= GetConsoleKey(out _keyToPress, node, keyToPressField);
 
-            int channel; 
+            int channel;
             isSuccess &= GetInt(out channel, node, channelField);
             if (channel < 1 || channel > 8)
             {
@@ -142,21 +142,21 @@ public struct Config
 
             // ChannelId is zero-based array index
             _channelId = channel - 1;
-            
+
             isSuccess &= GetInt(out _from, node, fromField);
             if (_from < 1000 || _from > 2000)
             {
                 Log.Error($"Bad 'from' value: #{_from}  From value should be in range (1000:2000) as RC TX microseconds.");
                 isSuccess = false;
             }
-            
+
             isSuccess &= GetInt(out _to, node, toField);
             if (_to < 1000 || _to > 2000)
             {
                 Log.Error($"Bad 'to' value: #{_to}  From value should be in range (1000:2000) as RC TX microseconds.");
                 isSuccess = false;
             }
-            
+
             if (_from >= _to)
             {
                 Log.Error($"'from' value should be less than 'to' value.");
@@ -169,10 +169,10 @@ public struct Config
         }
     }
 
-    // Name of the game controller device to read 
+    // Name of the game controller device to read
     public string TxName { get; private set; }
 
-    // Name of the running process to send keypresses to 
+    // Name of the running process to send keypresses to
     public string ProcName { get; private set; }
 
     // Keypresses mapping
