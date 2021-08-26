@@ -18,7 +18,7 @@ public struct Config
         private int _code;
 
         // Game controller channel id
-        private int _channel;
+        private int _channelId;
 
         // Game controller channel range to send keypress on enter
         private int _from;
@@ -28,9 +28,9 @@ public struct Config
         {
             get { return _code; }
         }
-        public int Channel
+        public int ChannelId
         {
-            get { return _channel; }
+            get { return _channelId; }
         }
         public int From
         {
@@ -50,7 +50,7 @@ public struct Config
                 JSONNode intNode = node[intName];
                 if (intNode == null)
                 {
-                    Log.Error($"Cannot get int value fro field '{intName}'");
+                    Log.Error($"Cannot get int value from field '{intName}'");
                     break;
                 }
 
@@ -66,9 +66,32 @@ public struct Config
         {
             bool isSuccess = true;
             isSuccess &= GetInt(out _code, node, codeField);
-            isSuccess &= GetInt(out _channel, node, channelField);
+
+            int channel; 
+            isSuccess &= GetInt(out channel, node, channelField);
+            if (channel < 1 || channel > 8)
+            {
+                Log.Error($"Bad 'channel' value: #{channel}  Channel value should be in range (1:8)");
+                isSuccess = false;
+            }
+
+            // ChannelId is zero-based array index
+            _channelId = channel - 1;
+            
             isSuccess &= GetInt(out _from, node, fromField);
+            if (_from < 1000 || _from > 2000)
+            {
+                Log.Error($"Bad 'from' value: #{_from}  From value should be in range (1000:2000) as RC TX microseconds.");
+                isSuccess = false;
+            }
+            
             isSuccess &= GetInt(out _to, node, toField);
+            if (_to < 1000 || _to > 2000)
+            {
+                Log.Error($"Bad 'to' value: #{_to}  From value should be in range (1000:2000) as RC TX microseconds.");
+                isSuccess = false;
+            }
+
             return isSuccess;
         }
     }
