@@ -7,8 +7,7 @@
             "keyToPress": "U",
             "channel": 6,
             "from": 1000,
-            "to": 1400,
-            "sendOnStart": true
+            "to": 1400
         },
         {
             "name": "Angle",

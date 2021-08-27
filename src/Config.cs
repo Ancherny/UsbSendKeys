@@ -12,7 +12,6 @@ public struct Config
     private const string channelField = "channel";
     private const string fromField = "from";
     private const string toField = "to";
-    private const string sendOnStartField = "sendOnStart";
 
     public struct Key
     {
@@ -29,9 +28,6 @@ public struct Config
         private int _from;
         private int _to;
 
-        // If true this keypress will be sent to the process on start
-        private bool _sendOnStart;
-
         public string Name
         {
             get { return _name; }
@@ -43,10 +39,6 @@ public struct Config
         public int ChannelId
         {
             get { return _channelId; }
-        }
-        public bool SendOnStart
-        {
-            get { return _sendOnStart; }
         }
 
         public bool IsActive(int channelValue)
@@ -109,6 +101,7 @@ public struct Config
                 });
         }
 
+        // ReSharper disable once UnusedMember.Local
         private static bool GetBool(out bool value,  JSONNode node, string fieldName)
         {
             return GetField(
@@ -166,8 +159,6 @@ public struct Config
                 Log.Error($"'from' value should be less than 'to' value.");
                 isSuccess = false;
             }
-
-            isSuccess &= GetBool(out _sendOnStart, node, sendOnStartField);
 
             return isSuccess;
         }
