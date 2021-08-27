@@ -43,7 +43,7 @@ public struct Config
 
         public bool IsActive(int channelValue)
         {
-            return channelValue > _from && channelValue < _to;
+            return channelValue >= _from && channelValue <= _to;
         }
 
         private delegate bool GetValue<T>(out T value, JSONNode node);
