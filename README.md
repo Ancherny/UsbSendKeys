@@ -3,13 +3,16 @@ Translates usb game controller state into keypresses
 
 This is a Windows .Net 4.6 console application.
 
+## Idea
 The original idea was to switch flight modes in [Freerider quadrocopter simulatior](https://store.steampowered.com/app/813530/FPV_Freerider_Recharged/) directly from the RC transmitter as it happens in real flight instead of pressing keys on the keyboard.
 
+## Usage
 RC Transmitter is expected to be plugged in as a common usb game controller.
 
 The UsbSendKeys is expected to be running in the background while playing the main application.
 
-The configuration of keypresses is defined in the config.json file.
+# Configuration
+The configuration of keypresses is defined in the *config.json* file.
 
 Provided example is configured for Freerider keys, switching Acro mode (I key) and Self-Leveling (or Angle) mode (U key).
 
