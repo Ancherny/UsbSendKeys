@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using SimpleJSON;
+using WindowsInput.Native;
 
 public struct Config
 {
     private const string txNameField = "tx_name";
-    private const string procNameField = "proc_name";
     private const string keysField = "keys";
     private const string nameField = "name";
     private const string keyToPressField = "keyToPress";
@@ -19,7 +19,7 @@ public struct Config
         private string _name;
 
         // Code of the keypress to pass to the process
-        private ConsoleKey _keyToPress;
+        private VirtualKeyCode _keyToPress;
 
         // Game controller channel id
         private int _channelId;
@@ -32,7 +32,7 @@ public struct Config
         {
             get { return _name; }
         }
-        public ConsoleKey KeyToPress
+        public VirtualKeyCode KeyToPress
         {
             get { return _keyToPress; }
         }
@@ -113,21 +113,34 @@ public struct Config
                 true);
         }
 
-        private static bool GetConsoleKey(out ConsoleKey value,  JSONNode node, string fieldName)
+        private static bool GetVirtualKeyCode(out VirtualKeyCode value,  JSONNode node, string fieldName)
         {
             return GetField(
                 out value,
                 node,
                 fieldName,
-                ConsoleKey.Escape,
-                (out ConsoleKey kv, JSONNode jn) => Enum.TryParse(jn, out kv));
+                VirtualKeyCode.ESCAPE,
+                (out VirtualKeyCode kv, JSONNode jn) =>
+                {
+                    kv = VirtualKeyCode.ESCAPE;
+
+                    // Cast input string to ConsoleKey and then to VirtualKeyCode - to allow
+                    // casual values in config as 'U', 'I' instead of 'VK_U', 'VK_I'
+                    ConsoleKey ck;
+                    if (Enum.TryParse(jn, out ck))
+                    {
+                        kv = (VirtualKeyCode)ck;
+                        return  Enum.IsDefined(typeof(VirtualKeyCode), kv);
+                    }
+                    return false;
+                });
         }
 
         public bool ReadFromJson(JSONNode node)
         {
             bool isSuccess = true;
             isSuccess &= GetString(out _name, node, nameField);
-            isSuccess &= GetConsoleKey(out _keyToPress, node, keyToPressField);
+            isSuccess &= GetVirtualKeyCode(out _keyToPress, node, keyToPressField);
 
             int channel;
             isSuccess &= GetInt(out channel, node, channelField);
@@ -167,9 +180,6 @@ public struct Config
     // Name of the game controller device to read
     public string TxName { get; private set; }
 
-    // Name of the running process to send keypresses to
-    public string ProcName { get; private set; }
-
     // Keypresses mapping
     public Key[] Keys { get; private set; }
 
@@ -204,13 +214,6 @@ public struct Config
             if (string.IsNullOrEmpty(TxName))
             {
                 Log.Error("Cannot get device name from config.");
-                break;
-            }
-
-            ProcName = root[procNameField];
-            if (string.IsNullOrEmpty(ProcName))
-            {
-                Log.Error("Cannot get process name from config.");
                 break;
             }
 
