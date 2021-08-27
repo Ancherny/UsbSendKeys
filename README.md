@@ -1,5 +1,5 @@
 # UsbSendKeys
-Translates usb game controller state into keypresses for given process
+Translates usb game controller state into keypresses
 
 This is a Windows .Net 4.6 console application.
 
