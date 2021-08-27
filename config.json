@@ -1,0 +1,19 @@
+{
+    "tx_name": "RM TX16S Joystick",
+    "keys": [
+        {
+            "name": "Acro",
+            "keyToPress": "I",
+            "channel": 6,
+            "from": 1000,
+            "to": 1400
+        },
+        {
+            "name": "Angle",
+            "keyToPress": "U",
+            "channel": 6,
+            "from": 1600,
+            "to": 2000
+        }
+    ]
+}
