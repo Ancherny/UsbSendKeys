@@ -12,7 +12,7 @@ public class DirectInputRcTx : IRcTx
 
         private static int AxisValueToMicroseconds(int axisValue)
         {
-            return (int)(1.0f / uint.MaxValue * axisValue * 1000 + 1000);
+            return (int)(1.0f / ushort.MaxValue * axisValue * 1000 + 1000);
         }
 
         private static readonly Func<JoystickState, int>[] _getChannelValues =
