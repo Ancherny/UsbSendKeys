@@ -4,14 +4,14 @@
     "keys": [
         {
             "name": "Acro",
-            "keyToPress": "U",
+            "keyToPress": "I",
             "channel": 6,
             "from": 1000,
             "to": 1400
         },
         {
             "name": "Angle",
-            "keyToPress": "I",
+            "keyToPress": "U",
             "channel": 6,
             "from": 1600,
             "to": 2000
