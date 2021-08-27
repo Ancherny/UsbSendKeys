@@ -48,7 +48,8 @@ public class DirectInputRcTx : IRcTx
             {
                 activated = new bool[_getChannelValues.Length];
                 ChannelsState lastState = (ChannelsState)lastChannelsState;
-                if (lastState == null || lastState._channelValues.Length != _getChannelValues.Length)
+                bool hasLastState = lastState != null;
+                if (hasLastState && lastState._channelValues.Length != _getChannelValues.Length)
                 {
                     Log.Error($"Bad last channels state.");
                     break;
@@ -64,7 +65,7 @@ public class DirectInputRcTx : IRcTx
                         break;
                     }
 
-                    bool wasActive = key.IsActive(lastState._channelValues[key.ChannelId]);
+                    bool wasActive = hasLastState ? key.IsActive(lastState._channelValues[key.ChannelId]) : false;
                     bool isActive = key.IsActive(_channelValues[key.ChannelId]);
 
                     bool isActivated = wasActive ^ isActive && isActive;
