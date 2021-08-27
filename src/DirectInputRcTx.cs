@@ -41,12 +41,12 @@ public class DirectInputRcTx : IRcTx
             return true;
         }
 
-        public bool GetActivated(out bool[] activated, Config.Key[] keys, IChannelsState lastChannelsState)
+        public bool GetActivated(out List<Config.Key> activated, Config.Key[] keys, IChannelsState lastChannelsState)
         {
             bool isSuccess = false;
             do
             {
-                activated = new bool[_getChannelValues.Length];
+                activated = new List<Config.Key>(_getChannelValues.Length);
                 ChannelsState lastState = (ChannelsState)lastChannelsState;
                 bool hasLastState = lastState != null;
                 if (hasLastState && lastState._channelValues.Length != _getChannelValues.Length)
@@ -68,12 +68,9 @@ public class DirectInputRcTx : IRcTx
                     bool wasActive = hasLastState ? key.IsActive(lastState._channelValues[key.ChannelId]) : false;
                     bool isActive = key.IsActive(_channelValues[key.ChannelId]);
 
-                    bool isActivated = wasActive ^ isActive && isActive;
-                    activated[key.ChannelId] = isActivated;
-
-                    if (isActivated)
+                    if (wasActive ^ isActive && isActive)
                     {
-                        Log.Info($"Key '{key.Name}' is activated");
+                        activated.Add(key);
                     }
                 }
                 if (wasError)

@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 
 public class KeySender
 {
-    private const uint keyDownMsg = 0x0100;
+    private const uint WM_KEYUP = 0x0101;
+    private const uint WM_KEYDOWN = 0x0100;
 
     // Frame time to refresh RC TX state in milliseconds
     private const int frameDuration = 100;
@@ -85,30 +87,18 @@ public class KeySender
                 break;
             }
 
-            bool[] activated;
+            List<Config.Key> activated;
             if (!currentState.GetActivated(out activated, _keys, _lastState))
             {
                 break;
             }
 
-            bool wasError = false;
-            foreach (Config.Key key in _keys)
+            foreach (Config.Key key in activated)
             {
-                if (key.ChannelId < 0 || key.ChannelId >= activated.Length)
-                {
-                    Log.Error("Channel id is out of range.");
-                    wasError = true;
-                    break;
-                }
-
-                if (activated[key.ChannelId])
-                {
-                    PostMessage(_process.MainWindowHandle, keyDownMsg, (int)key.KeyToPress, 0);
-                }
-            }
-            if (wasError)
-            {
-                break;
+                Log.Info($"Key '{key.Name}' is activated");
+                PostMessage(_process.MainWindowHandle, WM_KEYDOWN, (int)key.KeyToPress, 0);
+                Thread.Sleep(frameDuration);
+                PostMessage(_process.MainWindowHandle, WM_KEYUP, (int)key.KeyToPress, 0);
             }
 
             _lastState = currentState;
