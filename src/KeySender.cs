@@ -114,5 +114,6 @@ public class KeySender
             _lastState = currentState;
             Thread.Sleep(frameDuration);
         }
+        Log.Info("Key sending stopped. Exiting.");
     }
 }
