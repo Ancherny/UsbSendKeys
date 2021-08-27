@@ -18,4 +18,4 @@ Provided example is configured for Freerider keys, switching Acro mode (I key) a
 
 The RC transmitter used in this example is Radiomaster TX16S and it is expected to be configured having some switch on the 6th channel with pulse range from 1000µS to 1400µS for Acro mode and from 1600µS to 2000µS for Angle mode.
 
-This pulse mapping used to be common with one used in [BetaFlight Configurator](https://github.com/betaflight/betaflight-configurator) - the major application for configuring quadrocopter flight controllers.
+This pulse mapping used to be common with one used for switching modes in [BetaFlight Configurator](https://github.com/betaflight/betaflight-configurator) - the major application for configuring quadrocopter flight controllers.
