@@ -53,10 +53,11 @@ public class KeySender
 
     public void StartSending()
     {
-        Log.Info("Keys sending started. Press any key to exit.");
+        Log.Info("Keys sending started. Press Esc to exit.");
         InputSimulator inputSimulator = new InputSimulator();
 
-        while(!Console.KeyAvailable)
+        bool doRepeat = true;
+        do
         {
             IChannelsState currentState;
             if (!_rcTx.GetChannelsState(out currentState))
@@ -78,7 +79,15 @@ public class KeySender
 
             _lastState = currentState;
             Thread.Sleep(frameDuration);
-        }
+
+            if (Console.KeyAvailable)
+            {
+                ConsoleKeyInfo key = Console.ReadKey(true);
+                doRepeat = key.Key != ConsoleKey.Escape;
+            }
+            
+        } while (doRepeat);
+        
         Log.Info("Key sending stopped. Exiting.");
     }
 }
