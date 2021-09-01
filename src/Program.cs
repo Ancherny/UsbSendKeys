@@ -9,26 +9,37 @@ internal static class Program
     [STAThread]
     private static void Main()
     {
-        string cfgJsonPath;
-        if (!ArgsReader.GetString(out cfgJsonPath, cfgPathArg))
+        do
         {
-            if (!File.Exists(cfgPathDefault))
+            string cfgJsonPath;
+            if (!ArgsReader.GetString(out cfgJsonPath, cfgPathArg))
             {
-                Log.Error("No config path defined.");
-                Log.Info("Expected command line:");
-                Log.Info("-args:cfg_path=<path>");
-                Log.Info("  where cfg_path defines path to the json config file");
-                return;
+                if (!File.Exists(cfgPathDefault))
+                {
+                    Log.Error("No config path defined.");
+                    Log.Info("Expected command line:");
+                    Log.Info("-args:cfg_path=<path>");
+                    Log.Info("  where cfg_path defines path to the json config file");
+                    break;
+                }
+
+                cfgJsonPath = cfgPathDefault;
             }
 
-            cfgJsonPath = cfgPathDefault;
-        }
+            Log.Info("Reading config file: " + cfgJsonPath);
+            
+            KeySender keySender;
+            if (!KeySender.Create(out keySender, cfgJsonPath))
+            {
+                break;
+            }
+            keySender.StartSending();
+            
+        } while (false);
 
-        KeySender keySender;
-        if (!KeySender.Create(out keySender, cfgJsonPath))
+        Log.Info("Press any key to exit.");
+        while (!Console.KeyAvailable)
         {
-            return;
         }
-        keySender.StartSending();
     }
 }

@@ -87,7 +87,7 @@ public class KeySender
             }
             
         } while (doRepeat);
-        
-        Log.Info("Key sending stopped. Exiting.");
+
+        Log.Info("Key sending stopped.");
     }
 }
